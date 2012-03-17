@@ -18,5 +18,11 @@ arch_variant_cflags := \
     -mfloat-abi=softfp \
     -mfpu=vfpv3-d16
 
+ifneq (,$(findstring cpu=cortex-a9,$(TARGET_EXTRA_CFLAGS)))
+# No need to work around Cortex A8 errata if we're targeting A9 only...
+arch_variant_ldflags := \
+	-Wl,--no-fix-cortex-a8
+else
 arch_variant_ldflags := \
 	-Wl,--fix-cortex-a8
+endif
