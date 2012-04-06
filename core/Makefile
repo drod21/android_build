@@ -1164,7 +1164,7 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(OTATOOLS)
 .PHONY: otapackage optpkg
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
 optpkg: otapackage
-	$(hide) ./vendor/rootz/tools/squisher
+	$(hide) ./vendor/rubix/tools/squisher
 # -----------------------------------------------------------------
 # The update package
 
