@@ -44,7 +44,7 @@ include $(TARGET_ARCH_SPECIFIC_MAKEFILE)
 # You can set TARGET_TOOLS_PREFIX to get gcc from somewhere else
 ifeq ($(strip $(TARGET_TOOLS_PREFIX)),)
 TARGET_TOOLS_PREFIX := \
-	prebuilt/$(HOST_PREBUILT_TAG)/toolchain/arm-linux-androideabi-4.4.x/bin/arm-linux-androideabi-
+	prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-linux-androideabi-4.6/bin/arm-linux-androideabi-
 endif
 
 # Only define these if there's actually a gcc in there.
@@ -114,11 +114,13 @@ TARGET_GLOBAL_CFLAGS += \
 			-include $(android_config_h) \
 			-I $(arch_include_dir)
 
-# This warning causes dalvik not to build with gcc 4.6 and -Werror.
+# This warning causes dalvik not to build with gcc 4.6.x and -Werror.
 # We cannot turn it off blindly since the option is not available
-# in gcc-4.4.x
-ifneq ($(filter 4.6.0%, $(shell $(TARGET_CC) --version)),)
-TARGET_GLOBAL_CFLAGS += -Wno-unused-but-set-variable
+# in gcc-4.4.x.  We also want to disable sincos optimization globally
+# by turning off the builtin sin function.
+ifneq ($(filter 4.6.%, $(shell $(TARGET_CC) --version)),)
+TARGET_GLOBAL_CFLAGS += -Wno-unused-but-set-variable -fno-builtin-sin \
+			-fno-strict-volatile-bitfields
 endif
 
 # This is to avoid the dreaded warning compiler message:

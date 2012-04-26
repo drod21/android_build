@@ -113,10 +113,16 @@ function setpaths()
     # and in with the new
     CODE_REVIEWS=
     prebuiltdir=$(getprebuilt)
+    gccprebuiltdir=$(get_abs_build_var ANDROID_GCC_PREBUILTS)
 
     # The gcc toolchain does not exists for windows/cygwin. In this case, do not reference it.
     export ANDROID_EABI_TOOLCHAIN=
-    toolchaindir=toolchain/arm-linux-androideabi-4.4.x/bin
+    case $(get_build_var TARGET_ARCH) in
+        x86) toolchaindir=x86/i686-android-linux-4.4.3/bin
+            ;;
+        arm|*) toolchaindir=arm/arm-linux-androideabi-4.6/bin
+            ;;
+    esac
     if [ -d "$prebuiltdir/$toolchaindir" ]; then
         export ANDROID_EABI_TOOLCHAIN=$prebuiltdir/$toolchaindir
     fi
@@ -745,7 +751,7 @@ function gdbclient()
        echo >>"$OUT_ROOT/gdbclient.cmds" "target remote $PORT"
        echo >>"$OUT_ROOT/gdbclient.cmds" ""
 
-       arm-linux-androideabi-gdb -x "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
+       $ANDROID_EABI_TOOLCHAIN/*-gdb -x "$OUT_ROOT/gdbclient.cmds" "$OUT_EXE_SYMBOLS/$EXE"
   else
        echo "Unable to determine build system output dir."
    fi
